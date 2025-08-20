@@ -16,20 +16,20 @@ const ToDoList = () => {
     //Shows the X on list element
     const showDelete = (taskToDelete) => {
         tasks[taskToDelete].delete = true;
+        //Update the list so the X shows when hovered over
+        setTasks([...tasks]);
     }
     //Hides the X on list element
     const hideDelete = (taskToDelete) => {
         tasks[taskToDelete].delete = false;
+        //Update the list so the X shows when hovered over
+        setTasks([...tasks]);
     }
     //Deletes item from the list
     const deleteItem = (taskToDelete) => {
         const updatedItems = tasks.filter((item, index) => index !== taskToDelete);
         setTasks(updatedItems);
     }
-    //Update the list so the X shows when hovered over
-    useEffect(() => {
-        setTasks([...tasks]);
-    },);
 
     return (
         <div className="col-5">
