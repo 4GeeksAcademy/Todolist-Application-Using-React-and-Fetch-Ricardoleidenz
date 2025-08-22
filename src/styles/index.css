@@ -5,3 +5,16 @@ body {
     font-weight: 400;
     font-style: normal;
 }
+
+button{
+    background: transparent;
+    border: none !important;
+}
+
+li:hover .highlightX{
+    color: red;
+}
+
+li .highlightX{
+    color: white;
+}

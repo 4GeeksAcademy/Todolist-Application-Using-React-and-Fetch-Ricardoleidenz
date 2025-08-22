@@ -2,34 +2,91 @@ import React, {useState, useEffect} from "react";
 
 //create your first component
 const ToDoList = () => {
+
     const [task, setTask] = useState("");
 
     const [tasks, setTasks] = useState([]);
 
+	const url = "https://playground.4geeks.com/todo";
+
+	const createUser = () => {
+		let options = {
+			method: "POST",
+			headers: {"content-type":"application/json"},
+			body: JSON.stringify(
+				{
+					"name": "Ricardoleidenz",
+					"id": 0
+				}
+			)
+		}
+		fetch(url + "/users/Ricardoleidenz", options)
+		.then(
+			(r) => {
+				console.log("r:",r)
+				return r.json()
+			}
+		)
+		.then(
+			(d) =>{
+				console.log("Create user data:",d)
+			}
+		)
+	}
+	const addToDo = () => {
+		let options = {
+			method: "POST",
+			headers: {"content-type":"application/json"},
+			body: JSON.stringify(
+				{
+					"label": task,
+					"is_done": false
+				}
+			)
+		}
+		fetch(url+"/todos/Ricardoleidenz", options)
+		.then(
+			(re) => {
+				console.log("r:",re)
+				return re.json()
+			}
+		)
+		.then(
+			(da) =>{
+				console.log("Create user data:",da)
+			}
+		)
+	}
+	
     const addTask = (newtask) =>{
+        addToDo()
         if(newtask != ""){
-            setTasks([...tasks, {value:newtask, delete:false}]);
+            setTasks([...tasks, newtask]);
             //Restart task when submitted
             setTask("");
         }
     }
-    //Shows the X on list element
-    const showDelete = (taskToDelete) => {
-        tasks[taskToDelete].delete = true;
-        //Update the list so the X shows when hovered over
-        setTasks([...tasks]);
-    }
-    //Hides the X on list element
-    const hideDelete = (taskToDelete) => {
-        tasks[taskToDelete].delete = false;
-        //Update the list so the X shows when hovered over
-        setTasks([...tasks]);
-    }
-    //Deletes item from the list
+
     const deleteItem = (taskToDelete) => {
         const updatedItems = tasks.filter((item, index) => index !== taskToDelete);
         setTasks(updatedItems);
     }
+
+	useEffect(() =>{
+		fetch(url + "/users")
+		.then(
+			(resp) => {
+				console.log("resp:",resp)
+				return resp.json()
+			}
+		)
+		.then(
+			(data) =>{
+				console.log("data:",data)
+			}
+		)
+		createUser()
+	},[])
 
     return (
         <div className="col-5">
@@ -52,10 +109,10 @@ const ToDoList = () => {
                 </li>
                 {tasks.map((taskInList,index)=>{
                         return (
-                            <li className="list-group-item row" key={index} onMouseEnter={() => showDelete(index)} onMouseLeave={() => hideDelete(index)}>
+                            <li className="list-group-item row" key={index}>
                                 <div className="container-fluid">
-                                    <p className="float-start">{taskInList.value}</p>
-                                    <p onClick={() => deleteItem(index)} className="float-end text-danger">{tasks[index].delete == true ? "X" : ""}</p>
+                                    <h5 className="float-start">{taskInList}</h5>
+                                    <button onClick={() => deleteItem(index)} className="highlightX float-end">X</button>
                                 </div>
                             </li>
                         );
