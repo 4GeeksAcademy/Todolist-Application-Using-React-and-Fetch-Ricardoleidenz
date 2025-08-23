@@ -9,7 +9,43 @@ const ToDoList = () => {
 
 	const url = "https://playground.4geeks.com/todo";
 
-	const createUser = () => {
+	//We get all users
+	const getAllUsers = async () => {
+		await fetch(url + "/users")
+		.then(
+			(allUsers) => {
+				return allUsers.json()
+			}
+		)
+		.then(
+			(data) => {
+				console.log("All users:",data.users)
+				//If the user "Ricardoleidenz" does not exist create it, else, notify that user already exists
+				if(!data.users.some(user => user.name == "Ricardoleidenz")){
+					createUser()
+				}
+				else{
+					console.log("User already exists")
+				}
+			}
+		)
+	}
+	//Fetch all ToDo's
+	const getAllToDos = async () => {
+		await fetch(url + "/users/Ricardoleidenz")
+		.then(
+			(allUsers) => {
+				return allUsers.json()
+			}
+		)
+		.then(
+			(data) => {
+				console.log("All To Do's data:",data)
+				setTasks(data.todos)
+			}
+		)
+	}
+	const createUser = async () => {
 		let options = {
 			method: "POST",
 			headers: {"content-type":"application/json"},
@@ -20,72 +56,64 @@ const ToDoList = () => {
 				}
 			)
 		}
-		fetch(url + "/users/Ricardoleidenz", options)
+		await fetch(url + "/users/Ricardoleidenz", options)
 		.then(
-			(r) => {
-				console.log("r:",r)
-				return r.json()
-			}
-		)
-		.then(
-			(d) =>{
-				console.log("Create user data:",d)
-			}
-		)
-	}
-	const addToDo = () => {
-		let options = {
-			method: "POST",
-			headers: {"content-type":"application/json"},
-			body: JSON.stringify(
-				{
-					"label": task,
-					"is_done": false
-				}
-			)
-		}
-		fetch(url+"/todos/Ricardoleidenz", options)
-		.then(
-			(re) => {
-				console.log("r:",re)
-				return re.json()
-			}
-		)
-		.then(
-			(da) =>{
-				console.log("Create user data:",da)
-			}
-		)
-	}
-	
-    const addTask = (newtask) =>{
-        addToDo()
-        if(newtask != ""){
-            setTasks([...tasks, newtask]);
-            //Restart task when submitted
-            setTask("");
-        }
-    }
-
-    const deleteItem = (taskToDelete) => {
-        const updatedItems = tasks.filter((item, index) => index !== taskToDelete);
-        setTasks(updatedItems);
-    }
-
-	useEffect(() =>{
-		fetch(url + "/users")
-		.then(
-			(resp) => {
-				console.log("resp:",resp)
-				return resp.json()
+			(response) => {
+				return response.json()
 			}
 		)
 		.then(
 			(data) =>{
-				console.log("data:",data)
+				console.log("Create user:",data)
 			}
 		)
-		createUser()
+	}
+	const addTask = async (newtask) =>{
+		if(newtask != ""){
+			let options = {
+				method: "POST",
+				headers: {"content-type":"application/json"},
+				body: JSON.stringify(
+					{
+						"label": newtask,
+						"is_done": false
+					}
+				)
+			}
+			let response = await fetch(url+"/todos/Ricardoleidenz", options)
+			if (response.ok){
+				let data = await response.json()
+				console.log("Added ToDo:",data)
+				setTask("")
+				getAllToDos()
+
+			}
+			else{
+				console.log("Error adding task:")
+			}
+		}
+		else{
+			console.log("Task is empty")
+		}
+    }
+
+    const deleteItem = async (taskID) => {
+		let options = {
+			method: "DELETE"
+		}
+		try{
+			console.log("Deleted ToDo:",taskID)
+			await fetch(url+"/todos/"+taskID, options)
+			.then(() => getAllToDos())
+		}
+		catch(error){
+			console.log("Error deleting task:",error)
+		}
+    }
+
+	useEffect(() =>{
+		getAllUsers()
+		getAllToDos()
 	},[])
 
     return (
@@ -111,8 +139,8 @@ const ToDoList = () => {
                         return (
                             <li className="list-group-item row" key={index}>
                                 <div className="container-fluid">
-                                    <h5 className="float-start">{taskInList}</h5>
-                                    <button onClick={() => deleteItem(index)} className="highlightX float-end">X</button>
+                                    <h5 className="float-start">{taskInList.label}</h5>
+                                    <button onClick={() => deleteItem(taskInList.id)} className="highlightX float-end">X</button>
                                 </div>
                             </li>
                         );
