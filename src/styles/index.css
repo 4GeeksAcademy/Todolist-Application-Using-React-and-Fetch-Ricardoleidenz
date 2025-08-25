@@ -11,10 +11,11 @@ button{
     border: none !important;
 }
 
-li:hover .highlightX{
-    color: red;
-}
-
 li .highlightX{
     color: white;
+}
+
+/* When item hovered show it's X by turning it red*/
+li:hover .highlightX{
+    color: red;
 }

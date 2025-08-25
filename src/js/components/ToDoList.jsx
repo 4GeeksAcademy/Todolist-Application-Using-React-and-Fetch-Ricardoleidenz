@@ -9,7 +9,7 @@ const ToDoList = () => {
 
 	const url = "https://playground.4geeks.com/todo";
 
-	//We get all users
+	//Fetch all users
 	const getAllUsers = async () => {
 		await fetch(url + "/users")
 		.then(
@@ -19,7 +19,6 @@ const ToDoList = () => {
 		)
 		.then(
 			(data) => {
-				console.log("All users:",data.users)
 				//If the user "Ricardoleidenz" does not exist create it, else, notify that user already exists
 				if(!data.users.some(user => user.name == "Ricardoleidenz")){
 					createUser()
@@ -30,6 +29,7 @@ const ToDoList = () => {
 			}
 		)
 	}
+
 	//Fetch all ToDo's
 	const getAllToDos = async () => {
 		await fetch(url + "/users/Ricardoleidenz")
@@ -40,7 +40,6 @@ const ToDoList = () => {
 		)
 		.then(
 			(data) => {
-				console.log("All To Do's data:",data)
 				setTasks(data.todos)
 			}
 		)
@@ -64,10 +63,12 @@ const ToDoList = () => {
 		)
 		.then(
 			(data) =>{
-				console.log("Create user:",data)
+				console.log("User created:",data)
 			}
 		)
 	}
+
+	//Add a task to the Server
 	const addTask = async (newtask) =>{
 		if(newtask != ""){
 			let options = {
@@ -89,17 +90,20 @@ const ToDoList = () => {
 
 			}
 			else{
-				console.log("Error adding task:")
+				console.log("Error adding task")
 			}
 		}
 		else{
 			console.log("Task is empty")
 		}
     }
+
+	//Calls deleteItem on every element of tasks
     const deleteAllToDos = async () => {
 		 {tasks.forEach((taskInList)=>deleteItem(taskInList.id))}
     }
 
+	//Delete element per provided ID
     const deleteItem = async (taskID) => {
 		let options = {
 			method: "DELETE"
@@ -122,6 +126,7 @@ const ToDoList = () => {
     return (
         <div className="col-5">
             <ul className="list-group">
+				{/* ADD TASK INPUT SECTION*/}
                 <li className="list-group-item row p-auto">
                     <input 
                         className="float-start col-7" 
@@ -138,6 +143,7 @@ const ToDoList = () => {
                     />
                     <button onClick={() => {addTask(task)}} type="button" className="float-end btn btn-primary col-4">Add</button>
                 </li>
+				{/* TASK LIST SECTION */}
                 {tasks.map((taskInList,index)=>{
                         return (
                             <li className="list-group-item row" key={index}>
@@ -149,13 +155,13 @@ const ToDoList = () => {
                         );
                     }
                 )}
+				{/* TASK COUNTER SECTION */}
                 <li className="list-group-item p-auto row">
                     <p className="float-start">{tasks.length == 0 ? "No tasks, add a task": `${tasks.length} Items left`}</p>
                 </li>
-                <li className="list-group-item p-auto row">
-                    <button onClick={() => {deleteAllToDos()}} type="button" className="float-end btn btn-primary">Delete All ToDo's</button>
-                </li>
             </ul>
+			{/* DELETE ALL TASKS BUTTON */}
+            <button onClick={() => {deleteAllToDos()}} type="button" className="m-3 btn btn-primary">Delete All ToDo's</button>
         </div>
     );
 };
