@@ -124,7 +124,7 @@ const ToDoList = () => {
 	},[])
 
     return (
-        <div className="col-5">
+        <div className="col-7">
             <ul className="list-group">
 				{/* ADD TASK INPUT SECTION*/}
                 <li className="list-group-item row p-auto">
