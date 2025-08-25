@@ -96,6 +96,9 @@ const ToDoList = () => {
 			console.log("Task is empty")
 		}
     }
+    const deleteAllToDos = async () => {
+		 {tasks.forEach((taskInList)=>deleteItem(taskInList.id))}
+    }
 
     const deleteItem = async (taskID) => {
 		let options = {
@@ -147,7 +150,10 @@ const ToDoList = () => {
                     }
                 )}
                 <li className="list-group-item p-auto row">
-                        <p className="float-start">{tasks.length == 0 ? "No tasks, add a task": `${tasks.length} Items left`}</p>
+                    <p className="float-start">{tasks.length == 0 ? "No tasks, add a task": `${tasks.length} Items left`}</p>
+                </li>
+                <li className="list-group-item p-auto row">
+                    <button onClick={() => {deleteAllToDos()}} type="button" className="float-end btn btn-primary">Delete All ToDo's</button>
                 </li>
             </ul>
         </div>
